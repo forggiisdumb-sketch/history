@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HISTORY</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e50914;
+    --red-dark: #8b0000;
+    --black: #0a0a0a;
+    --card: #181818;
+    --text: #f5f5f5;
+    --muted: #a3a3a3;
+    --green: #46d369;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+  body.locked { overflow: hidden; }
+
+  /* ---------- INTRO ---------- */
+  #intro {
+    position: fixed; inset: 0; z-index: 1000; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity .8s ease, visibility .8s;
+  }
+  #intro.done { opacity: 0; visibility: hidden; }
+  .intro-word {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 16vw, 12rem);
+    letter-spacing: .08em; color: var(--red); display: flex; line-height: 1;
+    text-shadow: 0 0 40px rgba(229,9,20,.6);
+  }
+  .intro-word span {
+    display: inline-block; opacity: 0; transform: translateY(60px) scaleY(1.6);
+    animation: letterIn .55s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+  .intro-sub {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.3rem, 4vw, 2.6rem);
+    letter-spacing: .12em; color: #fff; text-align: center; padding: 0 1rem; margin-top: .6rem;
+    opacity: 0; transform: translateY(15px); transition: opacity .8s ease, transform .8s ease;
+  }
+  .intro-sub.show { opacity: 1; transform: none; }
+  #intro.zoom .intro-word, #intro.zoom .intro-sub { animation: zoomOut 1s cubic-bezier(.7,0,.3,1) forwards; }
+  .intro-bar {
+    position: absolute; bottom: 0; left: 0; height: 4px; background: var(--red); width: 0;
+    animation: bar 3.6s ease-in-out forwards; box-shadow: 0 0 20px var(--red);
+  }
+  @keyframes letterIn { to { opacity: 1; transform: none; } }
+  @keyframes zoomOut { to { transform: scale(8); filter: blur(12px); opacity: 0; } }
+  @keyframes bar { to { width: 100%; } }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 2rem; padding: 1rem 4%;
+    background: linear-gradient(180deg, rgba(0,0,0,.85), transparent); transition: background .3s;
+  }
+  nav.solid { background: #000; }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--red);
+    letter-spacing: .06em; cursor: pointer; text-shadow: 0 0 12px rgba(229,9,20,.4);
+  }
+  nav ul { display: flex; gap: 1.2rem; list-style: none; }
+  nav a { color: var(--text); text-decoration: none; font-size: .9rem; opacity: .8; transition: opacity .2s; }
+  nav a:hover, nav a.active { opacity: 1; }
+  nav a.active { font-weight: 700; }
+
+  /* ---------- HERO / OVERVIEW ---------- */
+  .hero {
+    position: relative; min-height: 100vh; display: flex; align-items: center;
+    padding: 6rem 4% 8rem; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 75% 40%, rgba(229,9,20,.45), transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(139,0,0,.5), transparent 55%),
+      linear-gradient(135deg, #1a0000, #000 70%);
+    background-size: cover; background-position: center;
+  }
+  .hero.has-img::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.5) 50%, transparent 100%);
+  }
+  .hero::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%;
+    background: linear-gradient(transparent, var(--black));
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 640px; }
+  .hero-tag { color: var(--red); font-weight: 700; letter-spacing: .25em; font-size: .8rem; margin-bottom: .8rem; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: .95; margin-bottom: .6rem; }
+  .badges { display: flex; align-items: center; gap: .7rem; margin-bottom: 1rem; font-weight: 700; }
+  .badges .rating { border: 1px solid #aaa; padding: .05rem .45rem; font-weight: 500; font-size: .85rem; }
+  .badges .match { color: var(--green); }
+  .hero p { color: #ddd; font-size: 1.05rem; line-height: 1.5; margin-bottom: 1.6rem; }
+  .btns { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; }
+  .btn {
+    border: none; cursor: pointer; font: 700 1rem 'Inter', sans-serif;
+    padding: .75rem 1.8rem; border-radius: 4px; display: inline-flex; align-items: center; gap: .5rem;
+    transition: transform .15s, background .2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #ff1a25; }
+  .btn-ghost { background: rgba(255,255,255,.15); color: #fff; }
+  .btn-ghost:hover { background: rgba(255,255,255,.25); }
+  .btn-round {
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255,255,255,.6);
+    background: rgba(0,0,0,.4); color: #fff; font-size: 1.1rem; cursor: pointer;
+    transition: transform .15s, background .2s, border-color .2s;
+  }
+  .btn-round:hover { transform: scale(1.1); border-color: #fff; }
+  .btn-round.on { background: var(--red); border-color: var(--red); }
+  .credits { margin-top: 1.6rem; font-size: .85rem; color: var(--muted); line-height: 1.6; }
+  .credits b { color: #ddd; font-weight: 500; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.show { opacity: 1; transform: none; }
+
+  /* ---------- ROWS ---------- */
+  main { position: relative; z-index: 3; margin-top: -10vh; padding-bottom: 2rem; }
+  .row { margin: 0 0 2.5rem; scroll-margin-top: 80px; }
+  .row-head { display: flex; align-items: center; gap: 1rem; padding: 0 4%; margin-bottom: .2rem; }
+  .row h2 { font-size: 1.3rem; }
+  .season { position: relative; z-index: 20; }
+  .season-btn {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: linear-gradient(135deg, #1c1c1c, #0d0d0d);
+    color: #fff; border: 1px solid #333; border-left: 3px solid var(--red);
+    border-radius: 999px; padding: .45rem 1rem .45rem 1.1rem;
+    font: 700 .85rem 'Inter', sans-serif; letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; transition: border-color .2s, box-shadow .2s, transform .15s;
+  }
+  .season-btn:hover { border-color: var(--red); box-shadow: 0 0 14px rgba(229,9,20,.35); transform: translateY(-1px); }
+  .season-btn .count { color: var(--muted); font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .season-btn .chev {
+    width: 10px; height: 10px; border-right: 2px solid var(--red); border-bottom: 2px solid var(--red);
+    transform: rotate(45deg) translateY(-3px); transition: transform .25s;
+  }
+  .season.open .chev { transform: rotate(-135deg) translateY(-3px); }
+  .season-menu {
+    position: absolute; top: calc(100% + .5rem); left: 0; min-width: 200px;
+    background: rgba(18,18,18,.97); backdrop-filter: blur(8px);
+    border: 1px solid #2a2a2a; border-radius: 10px; padding: .4rem; list-style: none;
+    box-shadow: 0 14px 40px rgba(0,0,0,.7);
+    opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.97); transform-origin: top left;
+    transition: opacity .2s, transform .2s, visibility .2s;
+  }
+  .season.open .season-menu { opacity: 1; visibility: visible; transform: none; }
+  .season-menu li {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding: .6rem .8rem; border-radius: 6px; cursor: pointer; font-size: .9rem;
+    transition: background .15s;
+  }
+  .season-menu li:hover { background: #262626; }
+  .season-menu li small { color: var(--muted); }
+  .season-menu li.active { background: rgba(229,9,20,.15); color: #fff; font-weight: 700; }
+  .season-menu li.active::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-right: -.4rem; }
+  .row-wrap { position: relative; }
+  .track { display: flex; gap: .5rem; overflow-x: auto; scroll-behavior: smooth; padding: 1.5rem 4%; scrollbar-width: none; }
+  .track::-webkit-scrollbar { display: none; }
+  .arrow {
+    position: absolute; top: 0; bottom: 0; width: 4%; z-index: 5; background: rgba(0,0,0,.55);
+    border: none; color: #fff; font-size: 2rem; cursor: pointer; opacity: 0; transition: opacity .2s;
+  }
+  .row-wrap:hover .arrow { opacity: 1; }
+  .arrow.left { left: 0; } .arrow.right { right: 0; }
+
+  .card {
+    flex: 0 0 auto; width: 280px; aspect-ratio: 16/9; border-radius: 6px; cursor: pointer;
+    position: relative; overflow: hidden; transition: transform .3s ease, box-shadow .3s ease;
+    opacity: 0; transform: translateX(40px);
+  }
+  .card.in { opacity: 1; transform: none; }
+  .card:hover { transform: scale(1.12); z-index: 4; box-shadow: 0 10px 30px rgba(0,0,0,.8), 0 0 0 2px var(--red); }
+  .card .bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .card .label { position: absolute; left: 0; right: 0; bottom: 0; padding: .7rem; background: linear-gradient(transparent, rgba(0,0,0,.92)); }
+  .card .label strong { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .03em; display: block; }
+  .card .label small { color: var(--muted); font-size: .75rem; }
+  .card .label .pct { color: var(--green); font-weight: 700; font-size: .78rem; }
+  .card .num {
+    position: absolute; top: .4rem; right: .6rem; font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+    color: var(--red); background: rgba(0,0,0,.6); padding: .1rem .45rem; border-radius: 3px;
+  }
+  .card .play {
+    position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity .25s;
+  }
+  .card:hover .play { opacity: 1; }
+  .card .play span {
+    width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; background: rgba(0,0,0,.55);
+    display: grid; place-items: center; font-size: 1.1rem; padding-left: 3px;
+  }
+
+  /* ---------- DETAILS ---------- */
+  .details { padding: 1rem 4% 0; display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+  .box { background: var(--card); border-radius: 8px; padding: 1.5rem; border-top: 3px solid var(--red); }
+  .box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .04em; margin-bottom: .8rem; }
+  .cast { display: grid; grid-template-columns: 1fr 1fr; }
+  .cast div { padding: .55rem 0; border-bottom: 1px solid #262626; }
+  .cast .h { color: var(--muted); font-size: .75rem; letter-spacing: .15em; font-weight: 700; }
+  .cast .actor { color: #ccc; }
+  .producers div { padding: .55rem 0; border-bottom: 1px solid #262626; text-transform: uppercase; letter-spacing: .05em; }
+  .fade-row { opacity: 0; transform: translateY(12px); transition: opacity .5s, transform .5s; }
+  .fade-row.in { opacity: 1; transform: none; }
+
+  /* ---------- MODAL ---------- */
+  #modal {
+    position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.75);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+    opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
+  }
+  #modal.open { opacity: 1; visibility: visible; }
+  .modal-box {
+    background: var(--card); width: min(760px, 100%); max-height: 90vh; overflow-y: auto; border-radius: 8px;
+    transform: scale(.85); transition: transform .3s cubic-bezier(.2,.9,.3,1.2); position: relative;
+  }
+  #modal.open .modal-box { transform: scale(1); }
+  .modal-top { aspect-ratio: 16/9; max-height: 400px; width: 100%; position: relative; background-size: cover; background-position: center; }
+  .modal-top.fade::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 40%, var(--card)); }
+  .modal-top iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .modal-top h3 { position: absolute; left: 1.5rem; bottom: 1rem; z-index: 2; font-family: 'Bebas Neue', sans-serif; font-size: 3rem; }
+  .close {
+    position: absolute; top: .8rem; right: .8rem; z-index: 6; width: 38px; height: 38px; border-radius: 50%;
+    border: none; background: #000; color: #fff; font-size: 1.3rem; cursor: pointer;
+  }
+  .modal-body { padding: 1rem 1.5rem 1.8rem; }
+  .modal-body h4 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: .3rem; }
+  .meta { color: var(--green); font-weight: 700; margin-bottom: .8rem; }
+  .meta span { color: var(--muted); font-weight: 400; margin-left: .6rem; }
+  .modal-body p { line-height: 1.6; color: #ddd; }
+
+  #toast {
+    position: fixed; left: 50%; bottom: 2rem; transform: translate(-50%, 20px); z-index: 600;
+    background: #fff; color: #000; font-weight: 700; padding: .6rem 1.2rem; border-radius: 4px;
+    opacity: 0; transition: all .3s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  footer { text-align: center; color: #666; font-size: .85rem; padding: 3rem 4%; margin-top: 2rem; border-top: 1px solid #222; }
+
+  @media (max-width: 760px) {
+    nav ul { display: none; }
+    .card { width: 220px; }
+    .arrow { display: none; }
+    .details { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-word" id="introWord"></div>
+  <div class="intro-sub" id="introSub"></div>
+  <div class="intro-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo" id="logo"></div>
+  <ul>
+    <li><a href="#top" class="active">Overview</a></li>
+    <li><a href="#episodes">Episodes</a></li>
+    <li><a href="#trailers">Trailers &amp; More</a></li>
+    <li><a href="#similar">More Like This</a></li>
+    <li><a href="#details">Details</a></li>
+  </ul>
+</nav>
+
+<!-- HERO / OVERVIEW -->
+<header class="hero" id="top">
+  <div class="hero-content">
+    <div class="hero-tag reveal" id="heroTag"></div>
+    <h1 class="reveal" id="heroTitle"></h1>
+    <div class="badges reveal">
+      <span class="match" id="heroMatch"></span><span id="heroYear"></span><span class="rating" id="heroRating"></span>
+    </div>
+    <p class="reveal" id="heroDesc"></p>
+    <div class="btns reveal">
+      <button class="btn btn-red" id="playBtn">▶ Play</button>
+      <button class="btn btn-ghost" id="listBtn">+ My List</button>
+      <button class="btn-round" id="likeBtn" title="I like this">👍</button>
+      <button class="btn-round" id="dislikeBtn" title="Not for me">👎</button>
+    </div>
+    <div class="credits reveal" id="credits"></div>
+  </div>
+</header>
+
+<main>
+  <!-- EPISODES -->
+  <section class="row reveal" id="episodes">
+    <div class="row-head"><h2>Episodes</h2>
+      <div class="season" id="season">
+        <button class="season-btn" id="seasonBtn"><span id="seasonLabel"></span><span class="count" id="seasonCount"></span><span class="chev"></span></button>
+        <ul class="season-menu" id="seasonMenu"></ul>
+      </div>
+    </div>
+    <div class="row-wrap">
+      <button class="arrow left">‹</button><div class="track" id="episodeTrack"></div><button class="arrow right">›</button>
+    </div>
+  </section>
+
+  <!-- TRAILERS -->
+  <section class="row reveal" id="trailers">
+    <div class="row-head"><h2>Trailers &amp; More</h2></div>
+    <div class="row-wrap">
+      <button class="arrow left">‹</button><div class="track" id="trailerTrack"></div><button class="arrow right">›</button>
+    </div>
+  </section>
+
+  <!-- MORE LIKE THIS -->
+  <section class="row reveal" id="similar">
+    <div class="row-head"><h2>More Like This</h2></div>
+    <div class="row-wrap">
+      <button class="arrow left">‹</button><div class="track" id="similarTrack"></div><button class="arrow right">›</button>
+    </div>
+  </section>
+
+  <!-- DETAILS -->
+  <section class="row reveal" id="details">
+    <div class="row-head"><h2>Details</h2></div>
+    <div class="details">
+      <div class="box"><h3>Cast</h3><div class="cast" id="cast"></div></div>
+      <div class="box"><h3>Producers</h3><div class="producers" id="producers"></div></div>
+    </div>
+  </section>
+</main>
+
+<footer id="footer"></footer>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <button class="close" id="mClose">✕</button>
+    <div class="modal-top" id="mTop"></div>
+    <div class="modal-body">
+      <h4 id="mTitle"></h4>
+      <div class="meta" id="mMeta"></div>
+      <p id="mDesc"></p>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ==================================================================
+   ✏️  EDIT EVERYTHING HERE — this is your whole website
+   ------------------------------------------------------------------
+   • colors: two colors make a card's gradient background.
+   • image: "images/photo.jpg" uses a real picture instead (put the
+     file in your repo). Leave "" to use the colors.
+   • youtube: paste just the video ID (the part after "v=").
+     youtube.com/watch?v=abc123XYZ  →  youtube: "abc123XYZ"
+   ================================================================== */
+const SITE = {
+  brand: "HISTORY",                           // <- logo + intro word
+
+  show: {
+    title: "Age of Revolution",               // <- your show's name
+    tag: "A HISTORY MINI SERIES",             // small red text above the title (also in the intro)
+    match: "98% Match",
+    year: "2022",
+    rating: "TV-PG",
+    heroImage: "",                            // optional background picture for the top section
+    description: "Add show description here. Write a short summary of what your mini series is about and why it matters.",
+    starring: "[insert up to 4 actors]",
+    genre: "[insert genre]",
+    received: "[Rotten Tomatoes, IMDB, or etc. rating]",
+    director: "[group member's name]",
+    writer: "[group member's name]",
+    adaptedBy: "[group member's name]",
+    producer: "[group member's name]"
+  },
+
+  seasons: [
+    {
+      name: "Season 1",
+      episodes: [
+        { title: "Episode Title", length: "45m", colors: ["#7a0000", "#1a0000"], image: "", youtube: "", desc: "Add episode description here." },
+        { title: "Episode Title", length: "45m", colors: ["#b3121b", "#2a0505"], image: "", youtube: "", desc: "Add episode description here." },
+        { title: "Episode Title", length: "45m", colors: ["#5c0a0a", "#000000"], image: "", youtube: "", desc: "Add episode description here." },
+        { title: "Episode Title", length: "45m", colors: ["#e50914", "#3a0000"], image: "", youtube: "", desc: "Add episode description here." }
+      ]
+    }
+    // Need Season 2? Copy the whole { name: ..., episodes: [...] } block, paste it here after a comma.
+  ],
+
+  trailers: [
+    { title: "Official Trailer",  length: "2m", colors: ["#2b0000", "#7a0000"], image: "", youtube: "", desc: "Add trailer description here." },
+    { title: "Behind the Scenes", length: "5m", colors: ["#1a1a1a", "#8b0000"], image: "", youtube: "", desc: "Add description here." },
+    { title: "Teaser",            length: "1m", colors: ["#600000", "#000000"], image: "", youtube: "", desc: "Add description here." }
+  ],
+
+  similar: [
+    { title: "Similar Show Title", percent: "97% Similar", colors: ["#1f1f1f", "#600000"], image: "", desc: "Add similar show's description here." },
+    { title: "Similar Show Title", percent: "92% Similar", colors: ["#8b0000", "#0d0d0d"], image: "", desc: "Add similar show's description here." },
+    { title: "Similar Show Title", percent: "88% Similar", colors: ["#350000", "#e50914"], image: "", desc: "Add similar show's description here." },
+    { title: "Similar Show Title", percent: "81% Similar", colors: ["#0a0a0a", "#7a0000"], image: "", desc: "Add similar show's description here." }
+  ],
+
+  cast: [
+    { character: "Historical Character #1", actor: "Name 1" },
+    { character: "Historical Character #2", actor: "Name 2" },
+    { character: "Historical Character #3", actor: "Name 3" },
+    { character: "Historical Character #4", actor: "Name 4" },
+    { character: "Historical Character #5", actor: "Name 5" },
+    { character: "Historical Character #6", actor: "Name 6" },
+    { character: "Historical Character #7", actor: "Name 7" },
+    { character: "Historical Character #8", actor: "Name 8" }
+  ],
+
+  producers: ["Group Member #1", "Group Member #2", "Group Member #3", "Group Member #4"],
+
+  footer: "A history project by [Your Names]"
+};
+/* ================================================================== */
+
+const $ = id => document.getElementById(id);
+const S = SITE.show;
+const bgOf = it => it.image ? `url('${it.image}')` : `linear-gradient(135deg, ${it.colors[0]}, ${it.colors[1]})`;
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+/* ---------- Text ---------- */
+document.title = `${S.title} | ${SITE.brand}`;
+$("logo").textContent = SITE.brand;
+$("introWord").innerHTML = [...SITE.brand].map((ch, i) =>
+  `<span style="animation-delay:${i * 0.12}s">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
+$("introSub").textContent = `${S.title}: ${S.tag}`;
+$("heroTag").textContent = S.tag;
+$("heroTitle").textContent = S.title;
+$("heroMatch").textContent = S.match;
+$("heroYear").textContent = S.year;
+$("heroRating").textContent = S.rating;
+$("heroDesc").textContent = S.description;
+$("credits").innerHTML = `
+  <b>Starring:</b> ${S.starring}<br>
+  <b>Genre:</b> ${S.genre}<br>
+  <b>This show received a:</b> ${S.received}<br>
+  <b>Director:</b> ${S.director} &nbsp;·&nbsp; <b>Writer:</b> ${S.writer}<br>
+  <b>Adapted for ${SITE.brand} by:</b> ${S.adaptedBy} &nbsp;·&nbsp; <b>Producer:</b> ${S.producer}`;
+if (S.heroImage) { $("top").style.backgroundImage = `url('${S.heroImage}')`; $("top").classList.add("has-img"); }
+$("footer").textContent = `${SITE.footer} · ${SITE.brand}`;
+
+/* ---------- Cards ---------- */
+function makeCard(it, { num, sub, pct, playable }) {
+  const c = document.createElement("div");
+  c.className = "card";
+  c.innerHTML = `<div class="bg" style="background-image:${bgOf(it)}"></div>
+    ${num ? `<div class="num">${num}</div>` : ""}
+    ${playable ? `<div class="play"><span>▶</span></div>` : ""}
+    <div class="label"><strong>${it.title}</strong>
+      ${pct ? `<span class="pct">${pct}</span>` : ""}<small>${sub || ""}</small></div>`;
+  c.onclick = () => openModal(it, pct || sub);
+  return c;
+}
+
+function renderEpisodes(si) {
+  const track = $("episodeTrack"); track.innerHTML = "";
+  SITE.seasons[si].episodes.forEach((ep, i) =>
+    track.appendChild(makeCard(ep, { num: `E${i + 1}`, sub: `${SITE.seasons[si].name} · ${ep.length}`, playable: true })));
+  slideIn(track);
+}
+function pickSeason(si) {
+  const s = SITE.seasons[si];
+  $("seasonLabel").textContent = s.name;
+  $("seasonCount").textContent = `${s.episodes.length} episodes`;
+  [...$("seasonMenu").children].forEach((li, i) => li.classList.toggle("active", i === si));
+  $("season").classList.remove("open");
+  renderEpisodes(si);
+}
+SITE.seasons.forEach((s, i) => {
+  const li = document.createElement("li");
+  li.innerHTML = `<span>${s.name}</span><small>${s.episodes.length} eps</small>`;
+  li.onclick = () => pickSeason(i);
+  $("seasonMenu").appendChild(li);
+});
+$("seasonBtn").onclick = e => { e.stopPropagation(); $("season").classList.toggle("open"); };
+document.addEventListener("click", e => { if (!$("season").contains(e.target)) $("season").classList.remove("open"); });
+pickSeason(0);
+
+SITE.trailers.forEach(t => $("trailerTrack").appendChild(makeCard(t, { sub: t.length, playable: true })));
+SITE.similar.forEach(s => $("similarTrack").appendChild(makeCard(s, { pct: s.percent })));
+
+document.querySelectorAll(".row-wrap").forEach(w => {
+  const track = w.querySelector(".track");
+  w.querySelector(".left").onclick  = () => track.scrollBy({ left: -track.clientWidth * .8 });
+  w.querySelector(".right").onclick = () => track.scrollBy({ left:  track.clientWidth * .8 });
+});
+
+/* ---------- Details ---------- */
+$("cast").innerHTML = `<div class="h">CHARACTER</div><div class="h">ACTOR / ACTRESS</div>` +
+  SITE.cast.map(c => `<div class="fade-row">${c.character}</div><div class="fade-row actor">${c.actor}</div>`).join("");
+$("producers").innerHTML = SITE.producers.map(p => `<div class="fade-row">${p}</div>`).join("");
+
+/* ---------- Buttons ---------- */
+let inList = false;
+$("listBtn").onclick = () => {
+  inList = !inList;
+  $("listBtn").textContent = inList ? "✓ My List" : "+ My List";
+  toast(inList ? "Added to My List" : "Removed from My List");
+};
+$("likeBtn").onclick = () => { $("likeBtn").classList.toggle("on"); $("dislikeBtn").classList.remove("on"); };
+$("dislikeBtn").onclick = () => { $("dislikeBtn").classList.toggle("on"); $("likeBtn").classList.remove("on"); };
+$("playBtn").onclick = () => openModal(SITE.seasons[0].episodes[0], `${SITE.seasons[0].name} · Episode 1`);
+
+/* ---------- Modal ---------- */
+function openModal(it, metaText) {
+  const top = $("mTop");
+  if (it.youtube) {
+    top.className = "modal-top"; top.style.backgroundImage = "";
+    top.innerHTML = `<iframe src="https://www.youtube.com/embed/${it.youtube}?autoplay=1" allow="autoplay" allowfullscreen></iframe>`;
+  } else {
+    top.className = "modal-top fade"; top.style.backgroundImage = bgOf(it); top.innerHTML = "";
+  }
+  $("mTitle").textContent = it.title;
+  $("mMeta").innerHTML = `${S.title}<span>${metaText || ""}</span>`;
+  $("mDesc").textContent = it.desc;
+  $("modal").classList.add("open");
+}
+function closeModal() { $("modal").classList.remove("open"); $("mTop").innerHTML = ""; }
+$("mClose").onclick = closeModal;
+$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+/* ---------- Nav ---------- */
+const navLinks = [...document.querySelectorAll("nav a")];
+window.addEventListener("scroll", () => {
+  $("nav").classList.toggle("solid", scrollY > 50);
+  let current = "top";
+  ["top", "episodes", "trailers", "similar", "details"].forEach(id => {
+    if ($(id).getBoundingClientRect().top < 140) current = id;
+  });
+  navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + current));
+});
+$("logo").onclick = () => scrollTo({ top: 0 });
+
+/* ---------- Animations ---------- */
+function slideIn(scope) {
+  scope.querySelectorAll(".card, .fade-row").forEach((el, i) => {
+    el.classList.remove("in");
+    setTimeout(() => el.classList.add("in"), i * 70);
+  });
+}
+// Sections reveal as you scroll to them
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("show"); slideIn(e.target); io.unobserve(e.target); }
+}), { threshold: .15 });
+
+const brandTime = SITE.brand.length * 120 + 600;
+setTimeout(() => $("introSub").classList.add("show"), brandTime);
+setTimeout(() => $("intro").classList.add("zoom"), brandTime + 1800);
+setTimeout(() => {
+  $("intro").classList.add("done");
+  document.body.classList.remove("locked");
+  document.querySelectorAll(".hero .reveal").forEach((el, i) => setTimeout(() => el.classList.add("show"), i * 150));
+  document.querySelectorAll("main .row").forEach(r => io.observe(r));
+}, brandTime + 2500);
+</script>
+</body>
+</html>
