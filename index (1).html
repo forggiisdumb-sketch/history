@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HISTORY</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e50914;
+    --red-dark: #8b0000;
+    --black: #0a0a0a;
+    --card: #181818;
+    --text: #f5f5f5;
+    --muted: #a3a3a3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  body.locked { overflow: hidden; }
+
+  /* ---------- INTRO ---------- */
+  #intro {
+    position: fixed; inset: 0; z-index: 1000;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .8s ease, visibility .8s;
+  }
+  #intro.done { opacity: 0; visibility: hidden; }
+  .intro-word {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 16vw, 12rem);
+    letter-spacing: .08em;
+    color: var(--red);
+    display: flex;
+    text-shadow: 0 0 40px rgba(229,9,20,.6);
+  }
+  .intro-word span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(60px) scaleY(1.6);
+    animation: letterIn .55s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+  #intro.zoom .intro-word {
+    animation: zoomOut 1s cubic-bezier(.7,0,.3,1) forwards;
+  }
+  .intro-bar {
+    position: absolute; bottom: 0; left: 0; height: 4px;
+    background: var(--red); width: 0;
+    animation: bar 2.4s ease-in-out forwards;
+    box-shadow: 0 0 20px var(--red);
+  }
+  @keyframes letterIn { to { opacity: 1; transform: none; } }
+  @keyframes zoomOut {
+    0% { transform: scale(1); filter: blur(0); opacity: 1; }
+    100% { transform: scale(8); filter: blur(12px); opacity: 0; }
+  }
+  @keyframes bar { to { width: 100%; } }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 2rem;
+    padding: 1rem 4%;
+    background: linear-gradient(180deg, rgba(0,0,0,.85), transparent);
+    transition: background .3s;
+  }
+  nav.solid { background: #000; }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem; color: var(--red);
+    letter-spacing: .06em; cursor: pointer;
+    text-shadow: 0 0 12px rgba(229,9,20,.4);
+  }
+  nav ul { display: flex; gap: 1.2rem; list-style: none; }
+  nav a { color: var(--text); text-decoration: none; font-size: .9rem; opacity: .8; transition: opacity .2s; }
+  nav a:hover { opacity: 1; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative; min-height: 88vh;
+    display: flex; align-items: center;
+    padding: 0 4%;
+    background:
+      radial-gradient(ellipse at 75% 40%, rgba(229,9,20,.45), transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(139,0,0,.5), transparent 55%),
+      linear-gradient(135deg, #1a0000, #000 70%);
+    overflow: hidden;
+  }
+  .hero::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%;
+    background: linear-gradient(transparent, var(--black));
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 620px; }
+  .hero-tag {
+    color: var(--red); font-weight: 700; letter-spacing: .25em;
+    font-size: .8rem; margin-bottom: .8rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem); line-height: .95;
+    margin-bottom: 1rem;
+  }
+  .hero p { color: #ddd; font-size: 1.1rem; line-height: 1.5; margin-bottom: 1.6rem; }
+  .btns { display: flex; gap: .8rem; flex-wrap: wrap; }
+  .btn {
+    border: none; cursor: pointer; font: 700 1rem 'Inter', sans-serif;
+    padding: .75rem 1.8rem; border-radius: 4px;
+    display: inline-flex; align-items: center; gap: .5rem;
+    transition: transform .15s, background .2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #ff1a25; }
+  .btn-ghost { background: rgba(255,255,255,.15); color: #fff; }
+  .btn-ghost:hover { background: rgba(255,255,255,.25); }
+
+  /* reveal-on-load for site parts */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.show { opacity: 1; transform: none; }
+
+  /* ---------- ROWS ---------- */
+  main { position: relative; z-index: 3; margin-top: -8vh; padding-bottom: 4rem; }
+  .row { margin: 0 0 2.5rem; }
+  .row h2 { font-size: 1.3rem; padding: 0 4%; margin-bottom: .7rem; }
+  .row-wrap { position: relative; }
+  .track {
+    display: flex; gap: .5rem;
+    overflow-x: auto; scroll-behavior: smooth;
+    padding: 1.5rem 4%;
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .arrow {
+    position: absolute; top: 0; bottom: 0; width: 4%; z-index: 5;
+    background: rgba(0,0,0,.55); border: none; color: #fff;
+    font-size: 2rem; cursor: pointer; opacity: 0; transition: opacity .2s;
+  }
+  .row-wrap:hover .arrow { opacity: 1; }
+  .arrow.left { left: 0; } .arrow.right { right: 0; }
+
+  .card {
+    flex: 0 0 auto; width: 260px; aspect-ratio: 16/9;
+    border-radius: 6px; cursor: pointer; position: relative;
+    overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease;
+    opacity: 0; transform: translateX(40px);
+  }
+  .card.in { opacity: 1; transform: none; }
+  .card:hover {
+    transform: scale(1.12); z-index: 4;
+    box-shadow: 0 10px 30px rgba(0,0,0,.8), 0 0 0 2px var(--red);
+  }
+  .card .bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .card .label {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: .7rem; background: linear-gradient(transparent, rgba(0,0,0,.9));
+  }
+  .card .label strong { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .03em; display: block; }
+  .card .label small { color: var(--muted); font-size: .75rem; }
+  .card .num {
+    position: absolute; top: .4rem; right: .6rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--red);
+    background: rgba(0,0,0,.6); padding: .1rem .45rem; border-radius: 3px;
+  }
+
+  /* ---------- MODAL ---------- */
+  #modal {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,.75);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
+  }
+  #modal.open { opacity: 1; visibility: visible; }
+  .modal-box {
+    background: var(--card); width: min(720px, 100%); max-height: 90vh; overflow-y: auto;
+    border-radius: 8px; transform: scale(.85); transition: transform .3s cubic-bezier(.2,.9,.3,1.2);
+  }
+  #modal.open .modal-box { transform: scale(1); }
+  .modal-top { height: 280px; position: relative; background-size: cover; background-position: center; }
+  .modal-top::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 40%, var(--card)); }
+  .modal-top h3 {
+    position: absolute; left: 1.5rem; bottom: 1rem; z-index: 2;
+    font-family: 'Bebas Neue', sans-serif; font-size: 3rem;
+  }
+  .close {
+    position: absolute; top: .8rem; right: .8rem; z-index: 3;
+    width: 38px; height: 38px; border-radius: 50%; border: none;
+    background: #000; color: #fff; font-size: 1.3rem; cursor: pointer;
+  }
+  .modal-body { padding: 0 1.5rem 1.8rem; }
+  .meta { color: #46d369; font-weight: 700; margin-bottom: .8rem; }
+  .meta span { color: var(--muted); font-weight: 400; margin-left: .6rem; }
+  .modal-body p { line-height: 1.6; color: #ddd; }
+
+  footer { text-align: center; color: #666; font-size: .85rem; padding: 2rem 4% 3rem; border-top: 1px solid #222; }
+
+  @media (max-width: 700px) {
+    nav ul { display: none; }
+    .card { width: 200px; }
+    .arrow { display: none; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<!-- INTRO ANIMATION -->
+<div id="intro">
+  <div class="intro-word" id="introWord"></div>
+  <div class="intro-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo" id="logo"></div>
+  <ul>
+    <li><a href="#top">Home</a></li>
+    <li><a href="#rows">Topics</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-content">
+    <div class="hero-tag reveal" id="heroTag"></div>
+    <h1 class="reveal" id="heroTitle"></h1>
+    <p class="reveal" id="heroDesc"></p>
+    <div class="btns reveal">
+      <button class="btn btn-red" id="heroPlay">▶ Explore</button>
+      <button class="btn btn-ghost" id="heroInfo">ⓘ More Info</button>
+    </div>
+  </div>
+</header>
+
+<main id="rows"></main>
+
+<footer id="about"></footer>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <div class="modal-top" id="mTop">
+      <button class="close" id="mClose">✕</button>
+      <h3 id="mTitle"></h3>
+    </div>
+    <div class="modal-body">
+      <div class="meta" id="mMeta"></div>
+      <p id="mDesc"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ✏️ EDIT EVERYTHING HERE — this is your whole website
+   ========================================================= */
+const SITE = {
+  title: "HISTORY",                       // <- change the site name here
+  footer: "A history project by [Your Name]",
+
+  hero: {
+    tag: "FEATURED TOPIC",
+    title: "The Story of Us",
+    desc: "Replace this with the main idea of your project — the big question or theme you're exploring.",
+    itemRow: 0, itemIndex: 0              // which card "More Info" opens
+  },
+
+  // Each row = one category. Each item = one card.
+  // "color" makes the card background (two colors for a gradient).
+  // You can also add  image: "images/myphoto.jpg"  to use a real picture.
+  rows: [
+    {
+      name: "Featured",
+      items: [
+        { title: "Topic One",   years: "1000–1200", colors: ["#7a0000", "#1a0000"], desc: "Write a summary of this topic here." },
+        { title: "Topic Two",   years: "1200–1400", colors: ["#b3121b", "#2a0505"], desc: "Write a summary of this topic here." },
+        { title: "Topic Three", years: "1400–1600", colors: ["#5c0a0a", "#000000"], desc: "Write a summary of this topic here." },
+        { title: "Topic Four",  years: "1600–1800", colors: ["#e50914", "#3a0000"], desc: "Write a summary of this topic here." },
+        { title: "Topic Five",  years: "1800–1900", colors: ["#3d0000", "#120000"], desc: "Write a summary of this topic here." },
+        { title: "Topic Six",   years: "1900–2000", colors: ["#9e1b1b", "#0a0a0a"], desc: "Write a summary of this topic here." }
+      ]
+    },
+    {
+      name: "Key Events",
+      items: [
+        { title: "Event A", years: "Year", colors: ["#2b0000", "#7a0000"], desc: "What happened, why it mattered." },
+        { title: "Event B", years: "Year", colors: ["#1a1a1a", "#8b0000"], desc: "What happened, why it mattered." },
+        { title: "Event C", years: "Year", colors: ["#600000", "#000000"], desc: "What happened, why it mattered." },
+        { title: "Event D", years: "Year", colors: ["#c40812", "#1a0000"], desc: "What happened, why it mattered." },
+        { title: "Event E", years: "Year", colors: ["#400000", "#a00000"], desc: "What happened, why it mattered." }
+      ]
+    },
+    {
+      name: "Important People",
+      items: [
+        { title: "Person 1", years: "Born–Died", colors: ["#1f1f1f", "#600000"], desc: "Who they were and what they did." },
+        { title: "Person 2", years: "Born–Died", colors: ["#8b0000", "#0d0d0d"], desc: "Who they were and what they did." },
+        { title: "Person 3", years: "Born–Died", colors: ["#350000", "#e50914"], desc: "Who they were and what they did." },
+        { title: "Person 4", years: "Born–Died", colors: ["#0a0a0a", "#7a0000"], desc: "Who they were and what they did." },
+        { title: "Person 5", years: "Born–Died", colors: ["#5a0000", "#1a0000"], desc: "Who they were and what they did." }
+      ]
+    },
+    {
+      name: "Sources & Evidence",
+      items: [
+        { title: "Primary Source", years: "Document", colors: ["#2a0505", "#b3121b"], desc: "Describe the source and what it shows." },
+        { title: "Secondary Source", years: "Book / Article", colors: ["#111", "#5c0a0a"], desc: "Describe the source and what it shows." },
+        { title: "Map", years: "Visual", colors: ["#7a0000", "#000"], desc: "Describe the source and what it shows." },
+        { title: "Image", years: "Visual", colors: ["#3d0000", "#e50914"], desc: "Describe the source and what it shows." }
+      ]
+    }
+  ]
+};
+/* ========================================================= */
+
+const $ = id => document.getElementById(id);
+const cardBg = it => it.image
+  ? `url('${it.image}')`
+  : `linear-gradient(135deg, ${it.colors[0]}, ${it.colors[1]})`;
+
+// Title everywhere
+document.title = SITE.title;
+$("logo").textContent = SITE.title;
+$("introWord").innerHTML = [...SITE.title].map((ch, i) =>
+  `<span style="animation-delay:${i * 0.12}s">${ch === " " ? "&nbsp;" : ch}</span>`).join("");
+$("footer") ; $("about").textContent = `${SITE.footer} · ${SITE.title}`;
+
+// Hero
+$("heroTag").textContent = SITE.hero.tag;
+$("heroTitle").textContent = SITE.hero.title;
+$("heroDesc").textContent = SITE.hero.desc;
+
+// Rows
+const main = $("rows");
+SITE.rows.forEach((row, r) => {
+  const sec = document.createElement("section");
+  sec.className = "row reveal";
+  sec.innerHTML = `<h2>${row.name}</h2>
+    <div class="row-wrap">
+      <button class="arrow left" aria-label="Scroll left">‹</button>
+      <div class="track"></div>
+      <button class="arrow right" aria-label="Scroll right">›</button>
+    </div>`;
+  const track = sec.querySelector(".track");
+  row.items.forEach((it, i) => {
+    const c = document.createElement("div");
+    c.className = "card";
+    c.innerHTML = `<div class="bg" style="background-image:${cardBg(it)}"></div>
+      <div class="num">${String(i + 1).padStart(2, "0")}</div>
+      <div class="label"><strong>${it.title}</strong><small>${it.years}</small></div>`;
+    c.onclick = () => openModal(it);
+    track.appendChild(c);
+  });
+  sec.querySelector(".left").onclick  = () => track.scrollBy({ left: -track.clientWidth * .8 });
+  sec.querySelector(".right").onclick = () => track.scrollBy({ left:  track.clientWidth * .8 });
+  main.appendChild(sec);
+});
+
+// Modal
+function openModal(it) {
+  $("mTop").style.backgroundImage = cardBg(it);
+  $("mTitle").textContent = it.title;
+  $("mMeta").innerHTML = `${SITE.title}<span>${it.years}</span>`;
+  $("mDesc").textContent = it.desc;
+  $("modal").classList.add("open");
+}
+const closeModal = () => $("modal").classList.remove("open");
+$("mClose").onclick = closeModal;
+$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+const heroItem = SITE.rows[SITE.hero.itemRow].items[SITE.hero.itemIndex];
+$("heroInfo").onclick = () => openModal(heroItem);
+$("heroPlay").onclick = () => $("rows").scrollIntoView();
+
+// Nav goes solid on scroll
+window.addEventListener("scroll", () => $("nav").classList.toggle("solid", scrollY > 50));
+
+// Intro → site entrance
+const introTime = SITE.title.length * 120 + 1300;
+setTimeout(() => $("intro").classList.add("zoom"), introTime);
+setTimeout(() => {
+  $("intro").classList.add("done");
+  document.body.classList.remove("locked");
+  // Stagger hero pieces in
+  document.querySelectorAll(".hero .reveal").forEach((el, i) =>
+    setTimeout(() => el.classList.add("show"), i * 150));
+  // Rows + cards slide in
+  document.querySelectorAll("main .row").forEach((row, r) => {
+    setTimeout(() => {
+      row.classList.add("show");
+      row.querySelectorAll(".card").forEach((c, i) =>
+        setTimeout(() => c.classList.add("in"), i * 70));
+    }, 500 + r * 200);
+  });
+}, introTime + 700);
+</script>
+</body>
+</html>
